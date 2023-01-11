@@ -9,12 +9,12 @@ const app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded())
 app.use(cors())
-var port = 8000;
+var port = process.env.PORT || 8000;
 app.use(express.static(__dirname));
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://admin:damilare123@cluster0.xbvn4o3.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://admin:${process.env.MONGODB_PASSWORD}@cluster0.xbvn4o3.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri);
 
 
@@ -83,6 +83,10 @@ app.get('/home', async (req, res) => {
   finally {
     // await client.close();
   }
+})
+
+app.get('/', (req, res) => {
+  res.status(200).send("This is ConeysLostIsLandWebServer")
 })
 
 app.delete('/remove', async (req, res) => {
