@@ -65,7 +65,7 @@ app.post('/admin', async (req, res) => {
 app.post('/login', async (req, res) => {
   console.log("checking validity", req.body);
   const {username, password} = req.body;
-  console.log(typeof(process.env.ADMIN_USERNAME), process.env.ADMIN_SECRET)
+  console.log(process.env.ADMIN_USERNAME, process.env.ADMIN_SECRET)
   if(username==process.env.ADMIN_USERNAME &&
     password==process.env.ADMIN_SECRET) {
       res.status(200).send("Works")
