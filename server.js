@@ -1,6 +1,8 @@
 const express = require('express')
 const bodyParser = require('body-parser');
-const cors = require("cors")
+const cors = require("cors");
+require("dotenv").config();
+const randomString = require("randomized-string");
 // const bcrypt = require('bcrypt');
 
 
@@ -16,7 +18,6 @@ app.use(express.static(__dirname));
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://admin:${process.env.MONGODB_PASSWORD}@cluster0.xbvn4o3.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri);
-
 
 // The database to use
 const dbName = "ConeysLost";
@@ -61,6 +62,30 @@ app.post('/admin', async (req, res) => {
 
 })
 
+app.post('/login', async (req, res) => {
+  console.log("checking validity", req.body);
+  const {username, password} = req.body;
+  console.log(typeof(process.env.ADMIN_USERNAME), process.env.ADMIN_SECRET)
+  if(username==process.env.ADMIN_USERNAME &&
+    password==process.env.ADMIN_SECRET) {
+      res.status(200).send("Works")
+  } else {
+     res.status(400).send("Wrong Credentials")
+  }
+ 
+})
+
+app.post('/claim', async (req, res) => {
+  console.log(req.body);
+  const claimToken = randomString.generate({
+    range: 'abc123',
+    length: 8
+  })
+  res.status(200).send({claimToken});
+
+  // could create an admin dashboard and add post item data + token
+  // to list of claimed items for admins to view
+})
 
 app.get('/home', async (req, res) => {
   console.log("getting public items")
@@ -88,6 +113,10 @@ app.get('/home', async (req, res) => {
 app.get('/', (req, res) => {
   res.status(200).send("This is ConeysLostIsLandWebServer")
 })
+
+// app.get('/admin', (req, res) => {
+//   res.status(200).send()
+// })
 
 app.delete('/remove', async (req, res) => {
   const { image, location_lost, name, description  } = req.body;
